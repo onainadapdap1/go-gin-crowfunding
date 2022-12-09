@@ -26,7 +26,8 @@ func main() {
 	userService := user.NewService(userRepository) //return &service{repo: repository}
 	// user := user.RegisterUserInput{Name: "test 1", Occupation: "pekerjaan 1", Email: "pegasus@gmail.com", Password: "password"}
 	// userService.RegisterUser(user)
-
+	// test upload avatar manual
+	userService.SaveAvatar(1, "images/1-profile.png")
 	// 3. memanggil handler kemudian passing service sebagai parameter
 	userHandler := handler.NewUserHandler(userService) //	return &userHandler{userService: service}
 	router := gin.Default()
