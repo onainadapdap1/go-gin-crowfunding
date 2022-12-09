@@ -27,7 +27,7 @@ func main() {
 	// user := user.RegisterUserInput{Name: "test 1", Occupation: "pekerjaan 1", Email: "pegasus@gmail.com", Password: "password"}
 	// userService.RegisterUser(user)
 	// test upload avatar manual
-	userService.SaveAvatar(1, "images/1-profile.png")
+	// userService.SaveAvatar(1, "images/1-profile.png")
 	// 3. memanggil handler kemudian passing service sebagai parameter
 	userHandler := handler.NewUserHandler(userService) //	return &userHandler{userService: service}
 	router := gin.Default()
@@ -35,6 +35,7 @@ func main() {
 	api.POST("/users", userHandler.RegisterUserHandler)
 	api.POST("/sessions", userHandler.LoginUserHandler)
 	api.POST("/email_checkers", userHandler.CheckEmailAvailability)
+	api.POST("/avatars", userHandler.UploadAvatar)
 	// input dari user
 	// handler, mapping input dari user ke -> struct input
 	// service : melakukan mapping dari struct input ke struct User
