@@ -32,6 +32,7 @@ func main() {
 	router := gin.Default()
 	api := router.Group("/api/v1")
 	api.POST("/users", userHandler.RegisterUserHandler)
+	api.POST("/sessions", userHandler.LoginUserHandler)
 	// input dari user
 	// handler, mapping input dari user ke -> struct input
 	// service : melakukan mapping dari struct input ke struct User

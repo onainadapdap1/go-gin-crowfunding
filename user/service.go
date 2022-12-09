@@ -1,10 +1,15 @@
 package user
 
-import "golang.org/x/crypto/bcrypt"
+import (
+	"errors"
+
+	"golang.org/x/crypto/bcrypt"
+)
 
 // interface ini berupa business login mewakili kata kerja
 type Service interface {
 	RegisterUser(input RegisterUserInput) (User, error) //mengembalikan objek User
+	Login(input LoginInput) (User, error)
 }
 
 // dependensi atau kebergantungan kepada repository
@@ -42,3 +47,24 @@ func (s *service) RegisterUser(input RegisterUserInput) (User, error) {
 	return newUser, err
 }
 
+func (s *service) Login(input LoginInput) (User, error) {
+	// olah data yang dikirim dari postman
+	email := input.Email
+	password := input.Password
+
+	//panggil repository apakah ada user dengan email yang diinput
+	user, err := s.repo.FindByEmail(email)
+	if err != nil {
+		return user, err
+	}
+	if user.ID == 0 {
+		return user, errors.New("no user found on that email")
+	}
+
+	// bandingkan passwordhash di database dengan password input
+	if err := bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(password)); err != nil {
+		return user, err
+	}
+
+	return user, nil
+}
