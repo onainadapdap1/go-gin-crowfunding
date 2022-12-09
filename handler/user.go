@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/onainadapdap1/go-gin-crowfunding/auth"
 	"github.com/onainadapdap1/go-gin-crowfunding/helper"
 	"github.com/onainadapdap1/go-gin-crowfunding/user"
 )
@@ -12,11 +13,12 @@ import (
 // dependensi ke service
 type userHandler struct {
 	userService user.Service
+	authService auth.Service
 }
 
 // membuat new handler
-func NewUserHandler(service user.Service) *userHandler {
-	return &userHandler{userService: service}
+func NewUserHandler(userService user.Service, authService auth.Service) *userHandler {
+	return &userHandler{userService: userService, authService: authService}
 }
 
 func (h *userHandler) RegisterUserHandler(c *gin.Context) {
@@ -41,8 +43,15 @@ func (h *userHandler) RegisterUserHandler(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
+	// generate new token pada saat register
+	token, err := h.authService.GenerateToken(newUser.ID)
+	if err != nil {
+		response := helper.APIResponse("Register account failed create new token", http.StatusBadRequest, "error", nil)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
 
-	formatter := user.FormatUser(newUser, "tokentokentoken")
+	formatter := user.FormatUser(newUser, token)
 	response := helper.APIResponse("Account has been registered", http.StatusOK, "success", formatter)
 
 	c.JSON(http.StatusOK, response)
@@ -69,7 +78,15 @@ func (h *userHandler) LoginUserHandler(c *gin.Context) {
 		return
 	}
 
-	formatter := user.FormatUser(loggedinUser, "tokenlogin")
+	// generete new token when user login
+	token, err := h.authService.GenerateToken(loggedinUser.ID)
+	if err != nil {
+		response := helper.APIResponse("Login failed", http.StatusBadRequest, "error", nil)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	formatter := user.FormatUser(loggedinUser, token)
 	response := helper.APIResponse("succesfully login", http.StatusOK, "success", formatter)
 
 	c.JSON(http.StatusOK, response)
