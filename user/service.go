@@ -10,6 +10,7 @@ import (
 type Service interface {
 	RegisterUser(input RegisterUserInput) (User, error) //mengembalikan objek User
 	Login(input LoginInput) (User, error)
+	IsEmailAvailable(input CheckEmailInput) (bool, error)
 }
 
 // dependensi atau kebergantungan kepada repository
@@ -67,4 +68,17 @@ func (s *service) Login(input LoginInput) (User, error) {
 	}
 
 	return user, nil
+}
+
+func (s *service) IsEmailAvailable(input CheckEmailInput) (bool, error) {
+	// ambil inputan user
+	email := input.Email
+	user, err := s.repo.FindByEmail(email)
+	if err != nil {
+		return false, nil
+	}
+	if user.ID == 0 {
+		return true, nil
+	}
+	return false, nil
 }

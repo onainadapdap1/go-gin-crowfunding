@@ -33,6 +33,7 @@ func main() {
 	api := router.Group("/api/v1")
 	api.POST("/users", userHandler.RegisterUserHandler)
 	api.POST("/sessions", userHandler.LoginUserHandler)
+	api.POST("/email_checkers", userHandler.CheckEmailAvailability)
 	// input dari user
 	// handler, mapping input dari user ke -> struct input
 	// service : melakukan mapping dari struct input ke struct User
