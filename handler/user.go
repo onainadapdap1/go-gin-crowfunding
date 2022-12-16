@@ -141,7 +141,9 @@ func (h *userHandler) UploadAvatar(c *gin.Context) {
 		return
 	}
 	// misal id user = 1, harusnya dari jwt
-	userID := 1
+	// mendapatkan user yang melakukan request dari context
+	currentUser := c.MustGet("currentUser").(user.User)
+	userID := currentUser.ID
 	// simpan input file ke folder
 	// path := "images/" + file.Filename
 	path := fmt.Sprintf("images/%d-%s", userID, file.Filename) 
